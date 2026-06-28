@@ -5,7 +5,7 @@
 
 # Dependencies and build caches
 node_modules/
-.next/cache/
+**/.next/cache/
 .turbo/
 
 # Runtime data and secrets. Never commit live store/user/order data.
@@ -19,4 +19,3 @@ storage/
 *.backup
 *.before-*
 *.corrupt-*
-
