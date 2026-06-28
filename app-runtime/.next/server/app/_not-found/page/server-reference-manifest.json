@@ -1,0 +1,17 @@
+{
+  "node": {
+    "60f364c2bc584b4fea5105afc92594932740ad0780": {
+      "workers": {
+        "app/_not-found/page": {
+          "moduleId": 75409,
+          "async": false,
+          "exportedName": "submitConsultationAction",
+          "filename": "src/app/contacts/actions.ts"
+        }
+      },
+      "exportedName": "submitConsultationAction",
+      "filename": "src/app/contacts/actions.ts"
+    }
+  },
+  "edge": {}
+}

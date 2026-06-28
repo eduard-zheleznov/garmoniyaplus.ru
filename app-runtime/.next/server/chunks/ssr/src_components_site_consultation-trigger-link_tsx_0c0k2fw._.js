@@ -1,0 +1,3 @@
+module.exports=[88256,a=>{"use strict";var b=a.i(87924),c=a.i(38246);a.s(["ConsultationTriggerLink",0,function({href:a="/contacts?chat=consultant",source:d="widget",onClick:e,...f}){return(0,b.jsx)(c.default,{href:a,onClick:a=>{e?.(a),a.defaultPrevented||(a.preventDefault(),window.dispatchEvent(new CustomEvent("consultation-widget:open",{detail:{source:d,view:"chat"}})))},...f})}])}];
+
+//# sourceMappingURL=src_components_site_consultation-trigger-link_tsx_0c0k2fw._.js.map

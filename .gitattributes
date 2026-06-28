@@ -1,0 +1,5 @@
+# The current app is a production runtime snapshot, not source TS/React code.
+# Mark it generated so GitHub diffs/language stats stay useful.
+app-runtime/.next/** linguist-generated=true
+app-runtime/server.js linguist-generated=true
+

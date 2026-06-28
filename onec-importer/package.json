@@ -1,0 +1,11 @@
+{
+  "name": "lumera-1c-integration",
+  "version": "1.0.0",
+  "private": true,
+  "description": "1C CommerceML/JSON exchange service for Lumera storefront",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js"
+  }
+}

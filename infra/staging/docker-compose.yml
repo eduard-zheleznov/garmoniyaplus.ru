@@ -1,0 +1,16 @@
+services:
+  app:
+    image: lumera-app:backup-before-1c-prices-only-20260625
+    container_name: garmoniyaplus-staging
+    restart: unless-stopped
+    env_file:
+      - /opt/lumera/.env.production
+    environment:
+      SITE_URL: https://garmoniyaplus-staging.147.45.157.76.sslip.io
+      NODE_ENV: production
+    volumes:
+      - ./storage:/app/storage
+      - ./public/uploads:/app/public/uploads
+    ports:
+      - "3102:3000"
+

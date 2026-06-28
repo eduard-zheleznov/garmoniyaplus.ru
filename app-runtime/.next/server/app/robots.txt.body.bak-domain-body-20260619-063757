@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+
+Sitemap: http://147.45.157.76/sitemap.xml

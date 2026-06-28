@@ -1,0 +1,22 @@
+# Local/editor noise
+.DS_Store
+*.log
+*.tmp
+
+# Dependencies and build caches
+node_modules/
+.next/cache/
+.turbo/
+
+# Runtime data and secrets. Never commit live store/user/order data.
+storage/
+*.env
+.env*
+!.env.example
+
+# Backups produced directly on the server.
+*.bak
+*.backup
+*.before-*
+*.corrupt-*
+

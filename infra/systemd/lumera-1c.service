@@ -1,0 +1,17 @@
+[Unit]
+Description=Lumera 1C catalog exchange API
+After=network.target docker.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/lumera-1c.env
+WorkingDirectory=/opt/lumera-1c
+ExecStart=/usr/bin/node /opt/lumera-1c/server.js
+Restart=always
+RestartSec=5
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+
