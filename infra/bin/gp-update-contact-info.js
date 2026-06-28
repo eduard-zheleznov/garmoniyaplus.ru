@@ -6,7 +6,7 @@ const path = process.argv[2] || "/app/storage/lumera-store.json";
 const CONTACTS = {
   phone: "+7 983 191-03-83",
   phoneHref: "tel:+79831910383",
-  address: "Улица Торосова, 9а",
+  address: "Абакан, Улица Торосова, 9а",
   addressHref: "https://2gis.ru/abakan/geo/9711522351700561",
   workingHours: "9:00 — 18:00",
   telegram: "https://t.me/+79831910383",
