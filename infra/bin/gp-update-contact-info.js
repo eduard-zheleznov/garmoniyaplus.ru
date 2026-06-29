@@ -13,7 +13,7 @@ const CONTACTS = {
   workingHours: "9:00 — 18:00",
   telegram: "https://t.me/+79831910383",
   vk: "https://vk.com/garmoniyaplus",
-  max: "https://web.max.ru/"
+  max: "https://max.ru/u/f9LHodD0cOLZdd8ta9xft56OcqRLDR9X4QKrbWabs7itV-604qaew35roDY"
 };
 
 function upsertItem(items, nextItem) {
