@@ -8,6 +8,10 @@ const contactActionsChunk = "app-runtime/.next/server/chunks/ssr/src_app_contact
 const contactPatchScript = "infra/bin/gp-patch-contact-links-sharing.js";
 const contactStorageScript = "infra/bin/gp-update-contact-info.js";
 const authLeadPatchScript = "infra/bin/gp-patch-auth-code-leads.py";
+const fullRuntimeChunk = "app-runtime/.next/static/chunks/gp-runtime-full95.js";
+const contactEmailLoaderChunk =
+  "app-runtime/.next/static/chunks/0-60jcm20jig-.v20260629-contactemail142.js";
+const contactsManifest = "app-runtime/.next/server/app/contacts/page_client-reference-manifest.js";
 
 function read(path) {
   return fs.readFileSync(path, "utf8");
@@ -23,6 +27,9 @@ function main() {
   const patchScript = read(contactPatchScript);
   const storageScript = read(contactStorageScript);
   const authLeadPatch = read(authLeadPatchScript);
+  const fullRuntime = read(fullRuntimeChunk);
+  const contactEmailLoader = read(contactEmailLoaderChunk);
+  const contactManifest = read(contactsManifest);
 
   assert(
     contacts.includes("https://2gis.ru/abakan/firm/9711414977522540"),
@@ -66,6 +73,19 @@ function main() {
       authLeadPatch.includes('/api/gp-auth/send-lead') &&
       authLeadPatch.includes("info@garmoniya-plus.ru"),
     "auth-code mail service patch must add lead notifications to info email"
+  );
+  assert(
+    contactEmailLoader.includes("gp-runtime-full95.js?v=20260629-142") &&
+      contactManifest.includes("0-60jcm20jig-.v20260629-contactemail142.js") &&
+      !contactManifest.includes("0-60jcm20jig-.v20260624-speed141.js"),
+    "contacts manifest must use the cache-busted contact email loader/runtime"
+  );
+  assert(
+    fullRuntime.includes('["Abakan-sib@mail.ru","info@garmoniya-plus.ru"]') &&
+      !fullRuntime.includes('["info@garmoniya-plus.ru","Abakan-sib@mail.ru"]') &&
+      !fullRuntime.includes('link.href="mailto:Abakan-sib@mail.ru"') &&
+      !fullRuntime.includes('link.href="tel:+79134487333"'),
+    "full runtime must not overwrite current contact email/phone with stale values"
   );
 }
 

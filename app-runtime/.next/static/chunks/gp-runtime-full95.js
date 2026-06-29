@@ -4353,7 +4353,7 @@ var gpCompanyDetails=[
   ["Рљ/РЎ","30101810500000000608"],
   ["Р‘РРљ","049514608"],
   ["РўРµР»РµС„РѕРЅ","8-913-448-7333, 8-983-191-03-83"],
-  ["Email","Abakan-sib@mail.ru"],
+  ["Email","info@garmoniya-plus.ru"],
   ["РќР°Р»РѕРіРѕРІС‹Р№ СЂРµР¶РёРј","РЈРЎРќ РґРѕС…РѕРґ - СЂР°СЃС…РѕРґ, РќР”РЎ 5%"],
   ["Р”РёСЂРµРєС‚РѕСЂ","Р§Р°РїС‚С‹РєРѕРІ РђРЅРґСЂРµР№ Р“СЂРёРіРѕСЂСЊРµРІРёС‡"]
 ];
@@ -4695,8 +4695,8 @@ function replaceContactsText(){
   var main=document.querySelector("main");
   if(!main)return;
   [
-    ["+7 123 456 78 90","8-913-448-7333, 8-983-191-03-83"],
-    ["info@garmoniya-plus.ru","Abakan-sib@mail.ru"],
+    ["+7 123 456 78 90","+7 983 191-03-83"],
+    ["Abakan-sib@mail.ru","info@garmoniya-plus.ru"],
     ["РњРѕСЃРєРІР°, Р¦РІРµС‚РЅРѕР№ Р±СѓР»СЊРІР°СЂ, 21СЃ3","655017, Р РµСЃРїСѓР±Р»РёРєР° РҐР°РєР°СЃРёСЏ, Рі. РђР±Р°РєР°РЅ, СѓР». РўРѕСЂРѕСЃРѕРІРѕ, 9Р°"]
   ].forEach(function(pair){
     var walker=document.createTreeWalker(main,NodeFilter.SHOW_TEXT);
@@ -4707,10 +4707,10 @@ function replaceContactsText(){
     });
   });
   [].slice.call(main.querySelectorAll('a[href^="tel:"]')).forEach(function(link){
-    link.href="tel:+79134487333";
+    link.href="tel:+79831910383";
   });
   [].slice.call(main.querySelectorAll('a[href^="mailto:"]')).forEach(function(link){
-    link.href="mailto:Abakan-sib@mail.ru";
+    link.href="mailto:info@garmoniya-plus.ru";
   });
 }
 
