@@ -7,6 +7,8 @@ const appRoot = process.argv[2] || "app-runtime";
 const ssrDir = path.join(appRoot, ".next/server/chunks/ssr");
 const contactsChunk = path.join(ssrDir, "[root-of-the-server]__0t.92g4._.js");
 const layoutChunk = path.join(ssrDir, "[root-of-the-server]__0qfs6~9._.js");
+const contactActionsChunk = path.join(ssrDir, "src_app_contacts_actions_ts_0lfo2z9._.js");
+const twoGisFirmHref = "https://2gis.ru/abakan/firm/9711414977522540";
 
 function replaceOnce(filePath, before, after, label) {
   const source = fs.readFileSync(filePath, "utf8");
@@ -67,7 +69,7 @@ section.gp-requisites-card.gp-requisites-card .gp-requisites-icon{display:inline
 section.gp-requisites-card.gp-requisites-card .gp-requisites-icon svg{display:block!important;width:1.25rem!important;height:1.25rem!important;stroke:currentColor!important}
 section.gp-requisites-card.gp-requisites-card .gp-legal-details{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.55rem!important;margin-top:.9rem!important}
 section.gp-requisites-card.gp-requisites-card .gp-legal-details>div{min-height:3rem!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:.75rem!important;border-radius:1rem!important;padding:.65rem .8rem!important;background:rgba(255,255,255,.78)!important;border:1px solid rgba(175,90,102,.13)!important}
-section.gp-requisites-card.gp-requisites-card .gp-legal-details>div:first-child{grid-column:1/-1!important}
+section.gp-requisites-card.gp-requisites-card .gp-legal-details>div:first-child{display:none!important}
 section.gp-requisites-card.gp-requisites-card .gp-legal-details span{font-size:.67rem!important;line-height:1.1!important;letter-spacing:.18em!important;color:var(--brand-muted)!important}
 section.gp-requisites-card.gp-requisites-card .gp-legal-details strong{font-size:.84rem!important;line-height:1.2!important;text-align:right!important;letter-spacing:-.01em!important;color:var(--brand-text)!important}
 @media(max-width:767px){
@@ -121,7 +123,17 @@ const contactPolishScript = String.raw`
       box.appendChild(shield);
     });
   }
-  function run(){polishRequisites();installMapShield();}
+  function installConsultationLinkGuard(){
+    document.querySelectorAll('main a[href*="chat=consultant"]').forEach(function(link){
+      if(link.getAttribute("data-gp-consultation-link-fix")==="gp-consultation-link-fix-20260629")return;
+      link.setAttribute("data-gp-consultation-link-fix","gp-consultation-link-fix-20260629");
+      link.addEventListener("click",function(event){
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent("consultation-widget:open",{detail:{source:"contacts",view:"chat"}}));
+      });
+    });
+  }
+  function run(){polishRequisites();installMapShield();installConsultationLinkGuard();}
   run();
   var ticks=0,timer=setInterval(function(){run();if(++ticks>=80)clearInterval(timer)},250);
   ["DOMContentLoaded","load","pageshow","resize","orientationchange"].forEach(function(eventName){
@@ -137,6 +149,251 @@ const contactPolishScriptNode =
   JSON.stringify(contactPolishScript) +
   "}})";
 
+const consultationLinkGuardScript = String.raw`
+(function(){
+  var marker="gp-consultation-link-fix-20260629";
+  function bind(){
+    document.querySelectorAll('main a[href*="chat=consultant"]').forEach(function(link){
+      if(link.getAttribute("data-gp-consultation-link-fix")===marker)return;
+      link.setAttribute("data-gp-consultation-link-fix",marker);
+      link.addEventListener("click",function(event){
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent("consultation-widget:open",{detail:{source:"contacts",view:"chat"}}));
+      });
+    });
+  }
+  bind();
+  var ticks=0,timer=setInterval(function(){bind();if(++ticks>=80)clearInterval(timer)},250);
+  ["DOMContentLoaded","load","pageshow"].forEach(function(eventName){
+    window.addEventListener(eventName,bind,{passive:true});
+  });
+})();
+`;
+
+const consultationLinkGuardScriptNode =
+  '(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:' +
+  JSON.stringify(consultationLinkGuardScript) +
+  "}})";
+
+const consultationPositionFixScript = String.raw`
+(function(){
+  var marker="gp-consultation-position-fix-20260629";
+  function fixWidgetPosition(){
+    if(!window.matchMedia||!window.matchMedia("(max-width: 1023px)").matches)return;
+    document.querySelectorAll('button[aria-label="Открыть способы связи"],button[aria-label="Закрыть способы связи"],button[aria-label="Закрыть окно консультации"]').forEach(function(button){
+      var host=button.closest(".fixed");
+      if(!host||host.getAttribute("data-gp-consultation-position-fix")===marker)return;
+      host.setAttribute("data-gp-consultation-position-fix",marker);
+      host.style.bottom="calc(var(--mobile-viewport-bottom, 0px) + var(--mobile-dock-height, 5.35rem) + 0.85rem)";
+      host.style.right=".875rem";
+      host.style.zIndex="80";
+    });
+  }
+  function openConsultation(){
+    window.dispatchEvent(new CustomEvent("consultation-widget:open",{detail:{source:"contacts",view:"chat"}}));
+    fixWidgetPosition();
+    setTimeout(fixWidgetPosition,50);
+    setTimeout(fixWidgetPosition,250);
+  }
+  function bindLinks(){
+    document.querySelectorAll('main a[href*="chat=consultant"]').forEach(function(link){
+      if(link.getAttribute("data-gp-consultation-position-bind")===marker)return;
+      link.setAttribute("data-gp-consultation-position-bind",marker);
+      link.addEventListener("click",function(event){
+        event.preventDefault();
+        openConsultation();
+        setTimeout(openConsultation,80);
+      },true);
+    });
+  }
+  function run(){fixWidgetPosition();bindLinks();}
+  run();
+  var ticks=0,timer=setInterval(function(){run();if(++ticks>=120)clearInterval(timer)},250);
+  ["DOMContentLoaded","load","pageshow","resize","orientationchange"].forEach(function(eventName){
+    window.addEventListener(eventName,run,{passive:true});
+  });
+})();
+`;
+
+const consultationPositionFixScriptNode =
+  '(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:' +
+  JSON.stringify(consultationPositionFixScript) +
+  "}})";
+
+const consultationMobileBridgeScript = String.raw`
+(function(){
+  var marker="gp-consultation-mobile-bridge-20260629";
+  function isVisible(node){
+    if(!node)return false;
+    var rect=node.getBoundingClientRect();
+    return rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<window.innerHeight;
+  }
+  function findVisible(selector, predicate){
+    return Array.prototype.slice.call(document.querySelectorAll(selector)).find(function(node){
+      return isVisible(node)&&(!predicate||predicate(node));
+    });
+  }
+  function fixFloatingButton(){
+    if(!window.matchMedia||!window.matchMedia("(max-width: 1023px)").matches)return;
+    document.querySelectorAll(".gp-contact-widget-main").forEach(function(button){
+      button.style.bottom="";
+      button.style.right="";
+    });
+  }
+  function openMobileFallbackForm(){
+    var formInput=findVisible("input[name='name']");
+    if(formInput)return true;
+    var main=findVisible("button.gp-contact-widget-main");
+    if(main)main.click();
+    setTimeout(function(){
+      var oldCard=findVisible("button.gp-contact-widget-old-card",function(button){
+        return /Онлайн-консультант/i.test(button.textContent||"");
+      });
+      if(oldCard)oldCard.click();
+    },80);
+    setTimeout(function(){
+      var oldCard=findVisible("button.gp-contact-widget-old-card",function(button){
+        return /Онлайн-консультант/i.test(button.textContent||"");
+      });
+      if(oldCard)oldCard.click();
+    },220);
+    return !!main;
+  }
+  function openConsultation(){
+    window.dispatchEvent(new CustomEvent("consultation-widget:open",{detail:{source:"contacts",view:"chat"}}));
+    fixFloatingButton();
+    if(window.matchMedia&&window.matchMedia("(max-width: 1023px)").matches){
+      openMobileFallbackForm();
+    }
+  }
+  function bindLinks(){
+    document.querySelectorAll('main a[href*="chat=consultant"]').forEach(function(link){
+      if(link.getAttribute("data-gp-consultation-mobile-bridge")===marker)return;
+      link.setAttribute("data-gp-consultation-mobile-bridge",marker);
+      link.addEventListener("click",function(event){
+        event.preventDefault();
+        openConsultation();
+        setTimeout(openConsultation,120);
+      },true);
+    });
+  }
+  function run(){fixFloatingButton();bindLinks();}
+  run();
+  var ticks=0,timer=setInterval(function(){run();if(++ticks>=120)clearInterval(timer)},250);
+  ["DOMContentLoaded","load","pageshow","resize","orientationchange"].forEach(function(eventName){
+    window.addEventListener(eventName,run,{passive:true});
+  });
+})();
+`;
+
+const consultationMobileBridgeScriptNode =
+  '(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:' +
+  JSON.stringify(consultationMobileBridgeScript) +
+  "}})";
+
+const contactFallbackLeadMailScript = String.raw`
+(function(){
+  var marker="gp-contact-fallback-lead-mail-20260629";
+  if(window[marker])return;
+  window[marker]=true;
+  function getValue(form,name){
+    var field=form&&form.querySelector("[name='"+name+"']");
+    return field&&typeof field.value==="string"?field.value.trim():"";
+  }
+  function setStatus(form,text,isError){
+    var status=form&&form.querySelector("[data-gp-contact-status]");
+    if(!status)return;
+    status.textContent=text;
+    status.classList.add("is-visible");
+    status.style.color=isError?"#9f1239":"var(--brand-text)";
+  }
+  document.addEventListener("submit",function(event){
+    var form=event.target&&event.target.closest&&event.target.closest("form[data-gp-contact-form]");
+    if(!form||form.getAttribute("data-gp-lead-mail-bound")===marker)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    form.setAttribute("data-gp-lead-mail-bound",marker);
+    var button=form.querySelector('button[type="submit"]');
+    if(button)button.disabled=true;
+    setStatus(form,"Отправляем заявку...",false);
+    fetch(location.origin+"/api/gp-auth/send-lead",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        requestId:"fallback-"+Date.now(),
+        source:"contacts",
+        name:getValue(form,"name"),
+        phone:getValue(form,"phone"),
+        email:getValue(form,"email"),
+        message:getValue(form,"message")
+      }),
+      cache:"no-store"
+    }).then(function(response){
+      return response.json().catch(function(){return {ok:response.ok};}).then(function(payload){
+        if(!response.ok||payload.ok===false)throw new Error(payload.message||"send failed");
+        setStatus(form,"Спасибо! Заявка отправлена, менеджер свяжется с вами.",false);
+        form.reset();
+      });
+    }).catch(function(){
+      setStatus(form,"Не получилось отправить заявку. Позвоните нам или попробуйте ещё раз.",true);
+    }).finally(function(){
+      form.removeAttribute("data-gp-lead-mail-bound");
+      if(button)button.disabled=false;
+    });
+  },true);
+})();
+`;
+
+const contactFallbackLeadMailScriptNode =
+  '(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:' +
+  JSON.stringify(contactFallbackLeadMailScript) +
+  "}})";
+
+const contactEmailRuntimeGuardScript = String.raw`
+(function(){
+  var marker="gp-contact-email-runtime-guard-20260629";
+  var oldEmail="Abakan-sib@mail.ru";
+  var newEmail="info@garmoniya-plus.ru";
+  function replaceText(root){
+    if(!root||!document.createTreeWalker)return;
+    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(node){
+        var parent=node.parentElement;
+        if(!parent||/SCRIPT|STYLE|NOSCRIPT/.test(parent.tagName))return NodeFilter.FILTER_REJECT;
+        return node.nodeValue&&node.nodeValue.indexOf(oldEmail)>-1?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;
+      }
+    });
+    var nodes=[];
+    while(walker.nextNode())nodes.push(walker.currentNode);
+    nodes.forEach(function(node){
+      node.nodeValue=node.nodeValue.split(oldEmail).join(newEmail);
+    });
+  }
+  function fix(){
+    document.querySelectorAll('a[href^="mailto:"]').forEach(function(link){
+      if((link.getAttribute("href")||"").toLowerCase().indexOf("abakan-sib")>-1){
+        link.setAttribute("href","mailto:"+newEmail);
+      }
+      if((link.textContent||"").indexOf(oldEmail)>-1){
+        link.textContent=(link.textContent||"").split(oldEmail).join(newEmail);
+      }
+    });
+    replaceText(document.querySelector("main")||document.body);
+  }
+  fix();
+  var ticks=0,timer=setInterval(function(){fix();if(++ticks>=120)clearInterval(timer)},250);
+  ["DOMContentLoaded","load","pageshow","resize","orientationchange"].forEach(function(eventName){
+    window.addEventListener(eventName,fix,{passive:true});
+  });
+  document.addEventListener("visibilitychange",fix,{passive:true});
+})();
+`;
+
+const contactEmailRuntimeGuardScriptNode =
+  '(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:' +
+  JSON.stringify(contactEmailRuntimeGuardScript) +
+  "}})";
+
 replaceOnce(
   contactsChunk,
   'let k={lat:55.773328,lon:37.6216403},l=[{pattern:/цветной\\s+бульвар/i,center:k}];',
@@ -144,11 +401,32 @@ replaceOnce(
   "contacts fixed map geocode"
 );
 
-replaceOnce(
+replaceIfPresent(
   contactsChunk,
   'q=await m(k.address),r=l.sections.find(a=>"contacts-card"===a.id)??l.sections[0];return',
-  'q=await m(k.address),r=l.sections.find(a=>"contacts-card"===a.id)??l.sections[0],s=encodeURIComponent("Абакан, Улица Торосова, 9а"),t=[{label:"Открыть в Яндекс Картах",href:"https://yandex.ru/maps/?text="+s},{label:"Открыть в Google Картах",href:"https://www.google.com/maps/search/?api=1&query="+s},{label:"Открыть в 2ГИС",href:"https://2gis.ru/abakan/geo/9711522351700561"}];return',
+  `q=await m(k.address),r=l.sections.find(a=>"contacts-card"===a.id)??l.sections[0],s=encodeURIComponent("Абакан, Улица Торосова, 9а"),t=[{label:"Открыть в Яндекс Картах",href:"https://yandex.ru/maps/?text="+s},{label:"Открыть в Google Картах",href:"https://www.google.com/maps/search/?api=1&query="+s},{label:"Открыть в 2ГИС",href:"${twoGisFirmHref}"}];return`,
   "contacts map links"
+);
+
+replaceIfPresent(
+  contactsChunk,
+  'href:"https://2gis.ru/abakan/geo/9711522351700561"',
+  `href:"${twoGisFirmHref}"`,
+  "contacts replace old 2GIS geo link"
+);
+
+replaceIfPresent(
+  contactsChunk,
+  'href:a.href,className:"no-underline decoration-transparent transition hover:text-[var(--brand-primary)]",children:a.description',
+  'href:a.href,target:a.href.startsWith("http")?"_blank":void 0,rel:a.href.startsWith("http")?"noreferrer":void 0,className:"no-underline decoration-transparent transition hover:text-[var(--brand-primary)]",children:a.description',
+  "contacts external address opens in new tab"
+);
+
+replaceIfPresent(
+  contactsChunk,
+  ".gp-legal-details>div:first-child{grid-column:1/-1!important}",
+  ".gp-legal-details>div:first-child{display:none!important}",
+  "contacts hide duplicate requisites organization row"
 );
 
 replaceIfPresent(
@@ -222,6 +500,68 @@ replaceIfMarkerMissing(
   '(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})',
   `${contactPolishStyleNode},${contactPolishScriptNode},(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})`,
   "contacts visual polish layer"
+);
+
+replaceIfMarkerMissing(
+  contactsChunk,
+  "gp-consultation-link-fix-20260629",
+  '(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})',
+  `${consultationLinkGuardScriptNode},(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})`,
+  "contacts consultation mobile link guard"
+);
+
+replaceIfMarkerMissing(
+  contactsChunk,
+  "gp-consultation-position-fix-20260629",
+  '(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})',
+  `${consultationPositionFixScriptNode},(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})`,
+  "contacts consultation mobile position guard"
+);
+
+replaceIfMarkerMissing(
+  contactsChunk,
+  "gp-consultation-mobile-bridge-20260629",
+  '(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})',
+  `${consultationMobileBridgeScriptNode},(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})`,
+  "contacts consultation mobile fallback bridge"
+);
+
+replaceIfMarkerMissing(
+  contactsChunk,
+  "gp-contact-fallback-lead-mail-20260629",
+  '(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})',
+  `${contactFallbackLeadMailScriptNode},(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})`,
+  "contacts fallback lead email submit"
+);
+
+replaceIfMarkerMissing(
+  contactsChunk,
+  "gp-contact-email-runtime-guard-20260629",
+  '(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})',
+  `${contactEmailRuntimeGuardScriptNode},(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})`,
+  "contacts runtime email guard"
+);
+
+replaceIfPresent(
+  contactsChunk,
+  'fetch("/api/gp-auth/send-lead",{',
+  'fetch(location.origin+"/api/gp-auth/send-lead",{',
+  "contacts fallback lead email absolute endpoint"
+);
+
+replaceIfPresent(
+  contactsChunk,
+  'fetch(\\"/api/gp-auth/send-lead\\",{',
+  'fetch(location.origin+\\"/api/gp-auth/send-lead\\",{',
+  "contacts fallback lead email absolute endpoint escaped"
+);
+
+replaceIfMarkerMissing(
+  contactActionsChunk,
+  "gpLeadEmail20260629",
+  'async function ji(a,b){let c=b.get("source"),d="home"===c||"about"===c||"widget"===c||"contacts"===c?c:"contacts",f=jg.safeParse({name:b.get("name"),phone:b.get("phone"),email:b.get("email"),message:b.get("message")});if(!f.success)return{ok:!1,message:f.error.issues[0]?.message??"Проверьте данные формы."};let g=(0,jh.generateId)("lead");return await (0,e.updateStore)(a=>(a.leads.unshift({id:g,createdAt:new Date().toISOString(),source:d,name:f.data.name,phone:f.data.phone,email:f.data.email||void 0,message:f.data.message||void 0}),a)),{ok:!0,message:"Заявка отправлена. Мы свяжемся с вами в рабочее время.",requestId:g}}',
+  'async function gpLeadEmail20260629(a,b,c){let d=(process.env.AUTH_CODE_BASE_URL||"https://garmoniyaplus.ru/api/gp-auth").replace(/\\/$/,""),e={requestId:a,source:b,name:c.name,phone:c.phone,email:c.email||"",message:c.message||""};try{let a=await fetch(d+"/send-lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(e),cache:"no-store"}),b=await a.json().catch(()=>({}));if(!a.ok||!1===b.ok)throw Error(b.message||`lead notify failed: ${a.status}`)}catch(a){console.error("gpLeadEmail20260629 failed",a)}}async function ji(a,b){let c=b.get("source"),d="home"===c||"about"===c||"widget"===c||"contacts"===c?c:"contacts",f=jg.safeParse({name:b.get("name"),phone:b.get("phone"),email:b.get("email"),message:b.get("message")});if(!f.success)return{ok:!1,message:f.error.issues[0]?.message??"Проверьте данные формы."};let g=(0,jh.generateId)("lead");return await (0,e.updateStore)(a=>(a.leads.unshift({id:g,createdAt:new Date().toISOString(),source:d,name:f.data.name,phone:f.data.phone,email:f.data.email||void 0,message:f.data.message||void 0}),a)),await gpLeadEmail20260629(g,d,f.data),{ok:!0,message:"Заявка отправлена. Мы свяжемся с вами в рабочее время.",requestId:g}}',
+  "contacts lead email notification"
 );
 
 replaceOnce(

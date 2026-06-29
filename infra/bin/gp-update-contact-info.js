@@ -6,8 +6,10 @@ const path = process.argv[2] || "/app/storage/lumera-store.json";
 const CONTACTS = {
   phone: "+7 983 191-03-83",
   phoneHref: "tel:+79831910383",
+  email: "info@garmoniya-plus.ru",
+  emailHref: "mailto:info@garmoniya-plus.ru",
   address: "Абакан, Улица Торосова, 9а",
-  addressHref: "https://2gis.ru/abakan/geo/9711522351700561",
+  addressHref: "https://2gis.ru/abakan/firm/9711414977522540",
   workingHours: "9:00 — 18:00",
   telegram: "https://t.me/+79831910383",
   vk: "https://vk.com/garmoniyaplus",
@@ -28,6 +30,7 @@ const store = JSON.parse(fs.readFileSync(path, "utf8"));
 store.brand = {
   ...store.brand,
   phone: CONTACTS.phone,
+  email: CONTACTS.email,
   address: CONTACTS.address,
   workingHours: CONTACTS.workingHours,
   telegram: CONTACTS.telegram,
@@ -52,6 +55,13 @@ upsertItem(items, {
 });
 
 upsertItem(items, {
+  id: "contact-email",
+  title: "Email",
+  description: CONTACTS.email,
+  href: CONTACTS.emailHref
+});
+
+upsertItem(items, {
   id: "contact-address",
   title: "Адрес",
   description: CONTACTS.address,
@@ -69,6 +79,7 @@ store.updatedAt = new Date().toISOString();
 fs.writeFileSync(path, JSON.stringify(store, null, 2) + "\n");
 console.log("contact info updated:", {
   phone: CONTACTS.phone,
+  email: CONTACTS.email,
   address: CONTACTS.address,
   workingHours: CONTACTS.workingHours,
   telegram: CONTACTS.telegram,
