@@ -351,7 +351,7 @@ const contactFallbackLeadMailScriptNode =
 
 const contactEmailRuntimeGuardScript = String.raw`
 (function(){
-  var marker="gp-contact-email-runtime-guard-20260629";
+  var marker="gp-contact-email-runtime-guard-20260629-v2";
   var oldEmail="Abakan-sib@mail.ru";
   var newEmail="info@garmoniya-plus.ru";
   function replaceText(root){
@@ -536,7 +536,7 @@ replaceIfMarkerMissing(
 
 replaceIfMarkerMissing(
   contactsChunk,
-  "gp-contact-email-runtime-guard-20260629",
+  "gp-contact-email-runtime-guard-20260629-v2",
   '(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})',
   `${contactEmailRuntimeGuardScriptNode},(0,b.jsx)(c.ContactMapCard,{address:k.address,initialCenter:q})`,
   "contacts runtime email guard"

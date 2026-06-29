@@ -49,7 +49,7 @@ function main() {
       contacts.includes("gp-consultation-position-fix-20260629") &&
       contacts.includes("gp-consultation-mobile-bridge-20260629") &&
       contacts.includes("gp-contact-fallback-lead-mail-20260629") &&
-      contacts.includes("gp-contact-email-runtime-guard-20260629") &&
+      contacts.includes("gp-contact-email-runtime-guard-20260629-v2") &&
       contacts.includes("location.origin") &&
       contacts.includes("/api/gp-auth/send-lead") &&
       contacts.includes("consultation-widget:open"),
