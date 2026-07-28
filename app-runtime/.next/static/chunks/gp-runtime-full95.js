@@ -2611,6 +2611,17 @@ function gpNavigateSearchHref82(href){
 }
 
 function gpRenderSearchSuggestions(input,items,query){
+  /*
+   * The site-wide fallback search owns the results surface.  Rendering this
+   * legacy list as well creates a second, competing panel in the mobile
+   * overlay.  Remove a panel left by an earlier runtime and let the fallback
+   * render the single compact list with a labelled result type.
+   */
+  var legacyHost=input&&(input.closest("form")||input.parentElement);
+  var legacyBox=legacyHost&&legacyHost.querySelector(".gp-search-suggestions");
+  if(legacyBox)legacyBox.remove();
+  return;
+
   var host=input.closest("form")||input.parentElement;
   if(!host)return;
   host.style.position=host.style.position||"relative";
