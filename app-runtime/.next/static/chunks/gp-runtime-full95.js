@@ -5401,18 +5401,13 @@ function gpFinalUxMoveMapControls(){
     frame.src=url.toString();
   }
   [].slice.call(document.querySelectorAll(".gp-contact-map-card iframe")).forEach(function(frame){
-    frame.style.setProperty("top","0","important");
-    frame.style.setProperty("height","100%","important");
+    frame.style.setProperty("top","-1rem","important");
+    frame.style.setProperty("height","calc(100% + 4.2rem)","important");
     var box=frame.parentElement;
     if(!box)return;
     box.classList.add("gp-map-touch-box");
     [].slice.call(box.querySelectorAll(".gp-map-touch-shield")).forEach(function(shield){shield.remove()});
-    if(!box.querySelector(".gp-map-mobile-attribution-mask")){
-      var mask=document.createElement("div");
-      mask.className="gp-map-mobile-attribution-mask";
-      mask.setAttribute("aria-hidden","true");
-      box.appendChild(mask);
-    }
+    [].slice.call(box.querySelectorAll(".gp-map-mobile-attribution-mask")).forEach(function(mask){mask.remove()});
     if(box.querySelector(".gp-map-mobile-zoom-controls"))return;
     var controls=document.createElement("div");
     controls.className="gp-map-mobile-zoom-controls";
