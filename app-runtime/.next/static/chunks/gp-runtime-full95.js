@@ -5301,6 +5301,7 @@ function ensureFinalUxStyle(){
   var style=document.createElement("style");
   style.id="gp-final-ux-style";
   style.textContent=[
+    ".gp-contact-widget-icon-bubble-v2.gp-vk-brand-icon{background:#0077ff!important;color:#fff!important}.gp-contact-widget-icon-bubble-v2.gp-vk-brand-icon svg{display:block!important;width:1.25rem!important;height:1.25rem!important;color:#fff!important;fill:currentColor!important}",
     ".gp-install-final-guide>h1{margin:0 0 .55rem!important}.gp-install-final-guide>.gp-install-old-note{margin:0 0 1.1rem!important;color:var(--brand-muted)!important;line-height:1.5!important}.gp-install-final-guide>h2{margin:0 0 1rem!important;color:var(--brand-text)!important;font-size:1.15rem!important;line-height:1.3!important}",
     "@media (max-width:360px){[data-mobile-shell='header']>div{padding-left:.15rem!important;padding-right:.15rem!important}[data-mobile-shell='header'] nav{gap:0!important;justify-content:space-between!important}[data-mobile-shell='header'] nav a,[data-mobile-shell='header'] nav button{min-width:0!important;width:auto!important;font-size:.48rem!important;letter-spacing:-.015em!important}[data-mobile-shell='header'] nav a[href='/compare']{display:none!important}[data-mobile-shell='header'] a[href='/']{transform:translateY(.3rem)!important}}",
     ".gp-final-ux-loader{position:fixed;right:1.25rem;bottom:1.25rem;z-index:260;display:flex;align-items:center;gap:.58rem;border:1px solid rgba(175,90,102,.18);border-radius:999px;background:rgba(255,255,255,.97);padding:.65rem .9rem;box-shadow:0 18px 42px rgba(36,29,25,.18);color:var(--brand-text);font-size:.82rem;font-weight:700;opacity:0;pointer-events:none;transform:translateY(.5rem);transition:.18s ease}.gp-final-ux-loader.is-visible{opacity:1;transform:translateY(0)}.gp-final-ux-loader i{width:.9rem;height:.9rem;border:.14rem solid rgba(175,90,102,.22);border-top-color:var(--brand-primary);border-radius:999px;animation:gp-final-ux-spin .65s linear infinite}@keyframes gp-final-ux-spin{to{transform:rotate(360deg)}}",
@@ -5364,7 +5365,7 @@ function gpFinalUxMoveMapControls(){
 }
 
 function gpFinalVkIcon(){
-  return '<span class="gp-contact-widget-icon-bubble-v2" style="background:#0077ff;color:#fff;font-weight:800;font-size:.66rem;letter-spacing:.01em">VK</span>';
+  return '<span class="gp-contact-widget-icon-bubble-v2 gp-vk-brand-icon" style="background:#0077ff;color:#fff" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path fill="currentColor" d="M12.62 17.6c-5.44 0-8.55-3.73-8.68-9.94h2.72c.09 4.56 2.1 6.49 3.69 6.89V7.66h2.56v3.93c1.57-.17 3.23-1.96 3.79-3.93h2.56c-.43 2.43-2.24 4.22-3.53 4.96 1.29.6 3.36 2.17 4.15 4.98h-2.82c-.61-1.89-2.14-3.27-4.15-3.47v3.47h-.29Z"/></svg></span>';
 }
 
 function gpFinalUxContactWidget(){
