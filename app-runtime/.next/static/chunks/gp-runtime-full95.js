@@ -5417,16 +5417,28 @@ function gpFinalUxMoveMapControls(){
     frame.src=url.toString();
   }
   [].slice.call(document.querySelectorAll(".gp-contact-map-card iframe")).forEach(function(frame){
-    frame.style.setProperty("top","-1rem","important");
-    frame.style.setProperty("height","calc(100% + 4.2rem)","important");
+    frame.style.setProperty("top","-4.75rem","important");
+    frame.style.setProperty("height","calc(100% + 9.5rem)","important");
     var box=frame.parentElement;
     if(!box)return;
+    box.style.setProperty("overflow","hidden","important");
+    box.style.setProperty("isolation","isolate","important");
+    box.style.setProperty("border-radius","1.15rem","important");
     box.classList.add("gp-map-touch-box");
     [].slice.call(box.querySelectorAll(".gp-map-touch-shield")).forEach(function(shield){shield.remove()});
     [].slice.call(box.querySelectorAll(".gp-map-mobile-attribution-mask")).forEach(function(mask){mask.remove()});
-    if(box.querySelector(".gp-map-mobile-zoom-controls"))return;
+    var existingControls=box.querySelector(".gp-map-mobile-zoom-controls");
+    if(existingControls){
+      existingControls.style.setProperty("right",".65rem","important");
+      existingControls.style.setProperty("left","auto","important");
+      existingControls.style.setProperty("top",".65rem","important");
+      return;
+    }
     var controls=document.createElement("div");
     controls.className="gp-map-mobile-zoom-controls";
+    controls.style.setProperty("right",".65rem","important");
+    controls.style.setProperty("left","auto","important");
+    controls.style.setProperty("top",".65rem","important");
     controls.setAttribute("role","group");
     controls.setAttribute("aria-label","Масштаб карты");
     controls.innerHTML='<button class="gp-map-mobile-zoom-button" type="button" aria-label="Приблизить карту">+</button><button class="gp-map-mobile-zoom-button" type="button" aria-label="Отдалить карту">−</button>';
