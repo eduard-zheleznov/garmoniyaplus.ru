@@ -2770,6 +2770,3 @@ window.addEventListener("storage",function(){setTimeout(quickRun,50)},{passive:t
   console.warn("gp final fixes failed",error);
 }
 })();
-
-
-
