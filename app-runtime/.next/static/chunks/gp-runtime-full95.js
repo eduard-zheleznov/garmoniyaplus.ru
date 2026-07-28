@@ -5369,9 +5369,60 @@ function gpFinalUxRemoveRedundantAuthNotice(){
 
 function gpFinalUxMoveMapControls(){
   if(location.pathname!=="/contacts")return;
+  if(!document.getElementById("gp-map-mobile-controls-style")){
+    var style=document.createElement("style");
+    style.id="gp-map-mobile-controls-style";
+    style.textContent=".gp-contact-map-card .gp-map-touch-shield{display:none!important}.gp-contact-map-card .gp-map-mobile-attribution-mask{position:absolute!important;inset-inline:0!important;bottom:0!important;z-index:9!important;height:4.8rem!important;pointer-events:none!important;background:linear-gradient(180deg,rgba(248,243,236,0),rgba(248,243,236,.97) 54%,rgba(248,243,236,.99))!important}.gp-contact-map-card .gp-map-mobile-zoom-controls{position:absolute!important;left:.7rem!important;top:.7rem!important;z-index:10!important;display:grid!important;overflow:hidden!important;border:1px solid rgba(175,90,102,.18)!important;border-radius:.8rem!important;background:rgba(255,255,255,.98)!important;box-shadow:0 12px 28px rgba(36,29,25,.17)!important}.gp-contact-map-card .gp-map-mobile-zoom-button{display:grid!important;width:2.45rem!important;height:2.45rem!important;place-items:center!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--brand-text,#241d19)!important;font-size:1.45rem!important;font-weight:500!important;line-height:1!important;cursor:pointer!important;touch-action:manipulation!important}.gp-contact-map-card .gp-map-mobile-zoom-button+.gp-map-mobile-zoom-button{border-top:1px solid rgba(175,90,102,.14)!important}.gp-contact-map-card .gp-map-mobile-zoom-button:hover{background:rgba(175,90,102,.08)!important}.gp-contact-map-card .gp-map-mobile-zoom-button:focus-visible{position:relative!important;z-index:1!important;outline:2px solid var(--brand-primary,#af5a66)!important;outline-offset:-2px!important}.gp-contact-map-card .gp-map-mobile-zoom-button:disabled{cursor:wait!important;opacity:.5!important}@media(min-width:768px){.gp-contact-map-card .gp-map-mobile-attribution-mask{height:2.8rem!important}.gp-contact-map-card .gp-map-mobile-zoom-controls{left:1rem!important;top:1rem!important}}";
+    document.head.appendChild(style);
+  }
+  function clamp(value,min,max){return Math.min(Math.max(value,min),max)}
+  function updateFrameZoom(frame,factor,controls){
+    var url;
+    try{url=new URL(frame.src,location.href)}catch(error){return}
+    var values=String(url.searchParams.get("bbox")||"").split(",").map(Number);
+    if(values.length!==4||values.some(function(value){return !Number.isFinite(value)}))return;
+    var left=values[0],bottom=values[1],right=values[2],top=values[3];
+    var centerLon=(left+right)/2,centerLat=(bottom+top)/2;
+    var halfLon=Math.max(.00015,Math.abs(right-left)*factor/2);
+    var halfLat=Math.max(.00015,Math.abs(top-bottom)*factor/2);
+    left=clamp(centerLon-halfLon,-180,180);
+    right=clamp(centerLon+halfLon,-180,180);
+    bottom=clamp(centerLat-halfLat,-85,85);
+    top=clamp(centerLat+halfLat,-85,85);
+    if(right-left<.0003||top-bottom<.0003)return;
+    url.searchParams.set("bbox",[left,bottom,right,top].join(","));
+    [].slice.call(controls.querySelectorAll("button")).forEach(function(button){button.disabled=true});
+    var enable=function(){
+      [].slice.call(controls.querySelectorAll("button")).forEach(function(button){button.disabled=false});
+      frame.removeEventListener("load",enable);
+    };
+    frame.addEventListener("load",enable);
+    window.setTimeout(enable,2600);
+    frame.src=url.toString();
+  }
   [].slice.call(document.querySelectorAll(".gp-contact-map-card iframe")).forEach(function(frame){
     frame.style.setProperty("top","0","important");
     frame.style.setProperty("height","100%","important");
+    var box=frame.parentElement;
+    if(!box)return;
+    box.classList.add("gp-map-touch-box");
+    [].slice.call(box.querySelectorAll(".gp-map-touch-shield")).forEach(function(shield){shield.remove()});
+    if(!box.querySelector(".gp-map-mobile-attribution-mask")){
+      var mask=document.createElement("div");
+      mask.className="gp-map-mobile-attribution-mask";
+      mask.setAttribute("aria-hidden","true");
+      box.appendChild(mask);
+    }
+    if(box.querySelector(".gp-map-mobile-zoom-controls"))return;
+    var controls=document.createElement("div");
+    controls.className="gp-map-mobile-zoom-controls";
+    controls.setAttribute("role","group");
+    controls.setAttribute("aria-label","Масштаб карты");
+    controls.innerHTML='<button class="gp-map-mobile-zoom-button" type="button" aria-label="Приблизить карту">+</button><button class="gp-map-mobile-zoom-button" type="button" aria-label="Отдалить карту">−</button>';
+    var buttons=controls.querySelectorAll("button");
+    buttons[0].addEventListener("click",function(){updateFrameZoom(frame,.6,controls)});
+    buttons[1].addEventListener("click",function(){updateFrameZoom(frame,1/.6,controls)});
+    box.appendChild(controls);
   });
 }
 
