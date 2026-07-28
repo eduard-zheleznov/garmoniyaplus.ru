@@ -5550,7 +5550,6 @@ function run(){
     gpFinalUxRemoveRedundantAuthNotice();
   }
   ensureLegalFooterButtons();
-  gpFinalUxDesktopInstallGuide();
   if(isContacts){
     replaceContactsText();
     addContactRequisites();
