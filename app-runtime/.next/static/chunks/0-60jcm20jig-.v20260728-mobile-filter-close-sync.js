@@ -3,7 +3,7 @@ try{
 if(window.__gpAndroidLite94)return;
 window.__gpAndroidLite94=true;
 
-var FULL_RUNTIME_SRC="/_next/static/chunks/gp-runtime-full95.js?v=20260728-mobile-filter-rounded";
+var FULL_RUNTIME_SRC="/_next/static/chunks/gp-runtime-full95.js?v=20260728-mobile-filter-close-sync";
 var GP_FAVORITES_ROUTE93=location.search.indexOf("favorites=1")>-1;
 var GP_BROKEN_CATALOG_REDIRECTS129={"/catalog/kremy":"крем"};
 
