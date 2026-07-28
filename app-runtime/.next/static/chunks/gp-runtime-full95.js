@@ -2657,7 +2657,10 @@ function installSearchSuggestions(){
     input.autocomplete="off";
     input.addEventListener("input",function(){
       var query=input.value;
-      gpLoadSearchIndex().then(function(items){gpRenderSearchSuggestions(input,items,query)});
+      clearTimeout(input.__gpSearchSuggestTimer);
+      input.__gpSearchSuggestTimer=setTimeout(function(){
+        gpLoadSearchIndex().then(function(items){gpRenderSearchSuggestions(input,items,query)});
+      },90);
     });
     input.addEventListener("keydown",function(event){
       if(event.key!=="Enter")return;
@@ -2718,7 +2721,11 @@ function gpOpenMobileSearchFallback(){
   var input=root.querySelector("input");
   input.focus();
   input.addEventListener("input",function(){
-    gpLoadSearchIndex().then(function(items){gpRenderSearchSuggestions(input,items,input.value)});
+    var query=input.value;
+    clearTimeout(input.__gpSearchSuggestTimer);
+    input.__gpSearchSuggestTimer=setTimeout(function(){
+      gpLoadSearchIndex().then(function(items){gpRenderSearchSuggestions(input,items,query)});
+    },90);
   });
   input.addEventListener("keydown",function(event){
     if(event.key==="Escape"){closeRoot();return}
@@ -5213,6 +5220,7 @@ function gpDefer84(callback,delay){
 
 function runMobileAccountFast84(){
   document.body.classList.add("gp-pravki-current","gp-pravki-current-account");
+  ensureFinalUxStyle();
   ensureLayoutFavoritesFiltersPatch();
   ensureAndroidFast84Style();
   ensurePriceCardFixStyle();
@@ -5229,6 +5237,7 @@ function runMobileAccountFast84(){
   normalizeAndroidAccountHeader84();
   ensureAccountAuthFallback();
   ensureAccountEmailVerification();
+  gpFinalUxRemoveRedundantAuthNotice();
   ensureLegalFooterButtons();
   if(!window.__gpAccountContactDeferred84){
     window.__gpAccountContactDeferred84=true;
@@ -5283,6 +5292,155 @@ function installProductBackFallback(){
   },true);
 }
 
+function gpFinalUxText(node){
+  return (node&&node.textContent||"").replace(/\s+/g," ").trim();
+}
+
+function ensureFinalUxStyle(){
+  if(document.getElementById("gp-final-ux-style"))return;
+  var style=document.createElement("style");
+  style.id="gp-final-ux-style";
+  style.textContent=[
+    ".gp-install-final-guide>h1{margin:0 0 .55rem!important}.gp-install-final-guide>.gp-install-old-note{margin:0 0 1.1rem!important;color:var(--brand-muted)!important;line-height:1.5!important}.gp-install-final-guide>h2{margin:0 0 1rem!important;color:var(--brand-text)!important;font-size:1.15rem!important;line-height:1.3!important}",
+    "@media (max-width:360px){[data-mobile-shell='header']>div{padding-left:.15rem!important;padding-right:.15rem!important}[data-mobile-shell='header'] nav{gap:0!important;justify-content:space-between!important}[data-mobile-shell='header'] nav a,[data-mobile-shell='header'] nav button{min-width:0!important;width:auto!important;font-size:.48rem!important;letter-spacing:-.015em!important}[data-mobile-shell='header'] nav a[href='/compare']{display:none!important}[data-mobile-shell='header'] a[href='/']{transform:translateY(.3rem)!important}}",
+    ".gp-final-ux-loader{position:fixed;right:1.25rem;bottom:1.25rem;z-index:260;display:flex;align-items:center;gap:.58rem;border:1px solid rgba(175,90,102,.18);border-radius:999px;background:rgba(255,255,255,.97);padding:.65rem .9rem;box-shadow:0 18px 42px rgba(36,29,25,.18);color:var(--brand-text);font-size:.82rem;font-weight:700;opacity:0;pointer-events:none;transform:translateY(.5rem);transition:.18s ease}.gp-final-ux-loader.is-visible{opacity:1;transform:translateY(0)}.gp-final-ux-loader i{width:.9rem;height:.9rem;border:.14rem solid rgba(175,90,102,.22);border-top-color:var(--brand-primary);border-radius:999px;animation:gp-final-ux-spin .65s linear infinite}@keyframes gp-final-ux-spin{to{transform:rotate(360deg)}}",
+    ".gp-final-promo-badge{padding:.48rem .82rem!important;font-size:.9rem!important;font-weight:800!important;letter-spacing:.12em!important;box-shadow:0 12px 24px rgba(175,90,102,.14)!important}.gp-install-final-guide{margin-top:1.25rem;border:1px solid rgba(255,255,255,.72);border-radius:1.9rem;background:rgba(255,255,255,.86);padding:1.25rem;box-shadow:0 18px 45px rgba(36,29,25,.07)}.gp-install-final-guide h1{margin:0;font-family:var(--font-heading);font-size:clamp(2rem,4vw,3.5rem);line-height:.98;color:var(--brand-text)}.gp-install-profile-picker{display:flex;flex-wrap:wrap;gap:.55rem;margin:1.1rem 0}.gp-install-profile-picker button{border:1px solid rgba(175,90,102,.18);border-radius:999px;background:#fff;padding:.66rem .9rem;color:var(--brand-text);font-size:.86rem;font-weight:700;transition:.18s ease}.gp-install-profile-picker button:hover,.gp-install-profile-picker button[aria-pressed='true']{border-color:var(--brand-primary);background:var(--brand-primary);color:#fff}.gp-install-final-guide .gp-install-old-grid{display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr))}.gp-install-final-guide .gp-install-old-step{overflow:hidden;border:1px solid rgba(175,90,102,.12);border-radius:1.35rem;background:#fff;padding:1rem}.gp-install-final-guide .gp-install-old-step-head{display:flex;gap:.8rem}.gp-install-final-guide .gp-install-old-step-head>span{display:inline-flex;flex:none;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:999px;background:rgba(175,90,102,.1);color:var(--brand-primary);font-weight:800}.gp-install-final-guide .gp-install-old-step h2{margin:0;color:var(--brand-text);font-size:1rem;line-height:1.25}.gp-install-final-guide .gp-install-old-step p{margin:.25rem 0 0;color:var(--brand-muted);font-size:.87rem;line-height:1.45}.gp-install-final-guide .gp-install-old-art{margin-top:.85rem}.gp-install-final-guide .gp-install-old-art img{display:block;width:100%;max-height:18rem;object-fit:contain;border-radius:1rem;background:rgba(248,243,236,.7)}@media (max-width:640px){.gp-final-ux-loader{right:.75rem;bottom:calc(var(--mobile-dock-height,5.35rem) + 1rem)}.gp-install-final-guide .gp-install-old-grid{grid-template-columns:1fr}.gp-install-final-guide{padding:1rem}}"
+  ].join("");
+  document.head.appendChild(style);
+}
+
+function gpFinalUxNormalizeCopy(){
+  var path=location.pathname;
+  var main=document.querySelector("main");
+  if(!main)return;
+  if(path==="/catalog"){
+    [].slice.call(main.querySelectorAll("h1")).forEach(function(node){
+      if(gpFinalUxText(node)==="\u041a\u0430\u0442\u0430\u043b\u043e\u0433")node.textContent="\u041f\u0440\u043e\u0444\u0435\u0441\u0441\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0441\u043c\u0435\u0442\u0438\u043a\u0430";
+    });
+  }
+  if(path==="/promotions"){
+    [].slice.call(main.querySelectorAll("h1")).forEach(function(node){
+      if(gpFinalUxText(node)==="\u0410\u043a\u0446\u0438\u043e\u043d\u043d\u044b\u0435 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f")node.textContent="\u0410\u043a\u0446\u0438\u0438 \u0438 \u0441\u043a\u0438\u0434\u043a\u0438";
+    });
+    [].slice.call(main.querySelectorAll("div")).forEach(function(node){
+      if(gpFinalUxText(node)==="\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f")node.textContent="\u0410\u043a\u0446\u0438\u0438";
+    });
+    [].slice.call(main.querySelectorAll("article")).forEach(function(card){
+      var badge=[].slice.call(card.children||[]).find(function(node){
+        var text=gpFinalUxText(node);
+        return text==="\u041f\u041e\u0414\u0410\u0420\u041e\u041a \u041a \u041d\u0410\u0411\u041e\u0420\u0423"||text==="\u0412\u042b\u0411\u041e\u0420 \u041d\u0415\u0414\u0415\u041b\u0418"||text==="-15%";
+      });
+      if(!badge)return;
+      var text=gpFinalUxText(badge);
+      if(text==="\u041f\u041e\u0414\u0410\u0420\u041e\u041a \u041a \u041d\u0410\u0411\u041e\u0420\u0423"||text==="\u0412\u042b\u0411\u041e\u0420 \u041d\u0415\u0414\u0415\u041b\u0418"){
+        card.remove();
+        return;
+      }
+      badge.textContent="\u041f\u041e\u0414\u0410\u0420\u041e\u041a \u0418 \u221215%";
+      badge.classList.add("gp-final-promo-badge");
+    });
+  }
+  if(location.search.indexOf("favorites=1")>-1){
+    [].slice.call(main.querySelectorAll("p")).forEach(function(node){
+      if(gpFinalUxText(node).replace(/[.!\u2026]+$/,"").toLowerCase()==="\u0442\u043e\u0432\u0430\u0440\u044b, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u0432\u044b \u0434\u043e\u0431\u0430\u0432\u0438\u043b\u0438 \u0432 \u0438\u0437\u0431\u0440\u0430\u043d\u043d\u043e\u0435")node.remove();
+    });
+  }
+}
+
+function gpFinalUxRemoveRedundantAuthNotice(){
+  if(location.pathname!=="/account"&&location.pathname.indexOf("/account/")!==0)return;
+  var matches=[].slice.call(document.querySelectorAll("main p,main div")).filter(function(node){
+    var text=gpFinalUxText(node).toLowerCase();
+    return text.indexOf("\u043b\u043e\u0433\u0438\u043d")>-1&&text.indexOf("\u043f\u0430\u0440\u043e\u043b")>-1&&text.indexOf("\u043f\u043e\u0432\u0442\u043e\u0440")>-1&&text.indexOf("\u043a\u043e\u0434")>-1;
+  });
+  matches.filter(function(node){
+    return !matches.some(function(other){return other!==node&&node.contains(other)});
+  }).forEach(function(node){
+    if(!node.querySelector("input,textarea,button"))node.remove();
+  });
+}
+
+function gpFinalUxMoveMapControls(){
+  if(location.pathname!=="/contacts")return;
+  [].slice.call(document.querySelectorAll(".gp-contact-map-card iframe")).forEach(function(frame){
+    frame.style.setProperty("top","0","important");
+    frame.style.setProperty("height","100%","important");
+  });
+}
+
+function gpFinalVkIcon(){
+  return '<span class="gp-contact-widget-icon-bubble-v2" style="background:#0077ff;color:#fff;font-weight:800;font-size:.66rem;letter-spacing:.01em">VK</span>';
+}
+
+function gpFinalUxContactWidget(){
+  var root=document.querySelector(".gp-contact-widget-fallback[data-gp-contact-widget-version='oldvisual73']");
+  if(!root)return;
+  var menu=root.querySelector(".gp-contact-widget-old-menu");
+  if(!menu||menu.dataset.gpFinalUx==="1")return;
+  menu.dataset.gpFinalUx="1";
+  menu.innerHTML='<button type="button" class="gp-contact-widget-old-card" data-gp-contact-open-form><span class="gp-contact-widget-old-copy"><span class="gp-contact-widget-old-title">\u041d\u0430\u043f\u0438\u0441\u0430\u0442\u044c \u043e\u043d\u043b\u0430\u0439\u043d-\u043a\u043e\u043d\u0441\u0443\u043b\u044c\u0442\u0430\u043d\u0442\u0443</span><span class="gp-contact-widget-old-note">\u0417\u0430\u0434\u0430\u0442\u044c \u0432\u043e\u043f\u0440\u043e\u0441 \u043d\u0430 \u0441\u0430\u0439\u0442\u0435</span></span>'+gpContactMessengerIcon("chat")+'</button><a class="gp-contact-widget-old-card" href="https://max.ru/u/f9LHodD0cOLZdd8ta9xft56OcqRLDR9X4QKrbWabs7itV-604qaew35roDY" target="_blank" rel="noreferrer"><span class="gp-contact-widget-old-copy"><span class="gp-contact-widget-old-title">\u041d\u0430\u043f\u0438\u0441\u0430\u0442\u044c \u0432 MAX</span><span class="gp-contact-widget-old-note">\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0447\u0430\u0442</span></span>'+gpContactMessengerIcon("max")+'</a><a class="gp-contact-widget-old-card" href="https://vk.com/garmoniyaplus" target="_blank" rel="noreferrer"><span class="gp-contact-widget-old-copy"><span class="gp-contact-widget-old-title">\u041d\u0430\u043f\u0438\u0441\u0430\u0442\u044c \u0432 VK</span><span class="gp-contact-widget-old-note">\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0441\u043e\u043e\u0431\u0449\u0435\u0441\u0442\u0432\u043e</span></span>'+gpFinalVkIcon()+'</a>';
+  var main=root.querySelector(".gp-contact-widget-main");
+  if(main)main.innerHTML='<span class="gp-contact-widget-icon is-active">'+gpContactMessengerIcon("max")+'</span><span class="gp-contact-widget-icon">'+gpFinalVkIcon()+'</span><span class="gp-contact-widget-icon">'+gpContactSvg("chat")+'</span>';
+}
+
+function gpFinalUxCatalogLoader(){
+  if(location.pathname.indexOf("/catalog")!==0)return;
+  if(document.documentElement.dataset.gpFinalCatalogLoader==="1")return;
+  document.documentElement.dataset.gpFinalCatalogLoader="1";
+  var loader=document.createElement("div");
+  loader.className="gp-final-ux-loader";
+  loader.setAttribute("role","status");
+  loader.setAttribute("aria-live","polite");
+  loader.innerHTML="<i></i><span>\u041e\u0431\u043d\u043e\u0432\u043b\u044f\u0435\u043c \u043a\u0430\u0442\u0430\u043b\u043e\u0433</span>";
+  document.body.appendChild(loader);
+  var timer=0,hideTimer=0;
+  function hide(){clearTimeout(timer);clearTimeout(hideTimer);loader.classList.remove("is-visible")}
+  function start(){
+    hide();
+    timer=setTimeout(function(){loader.classList.add("is-visible");hideTimer=setTimeout(hide,4200)},180);
+  }
+  document.addEventListener("click",function(event){
+    var control=event.target.closest&&event.target.closest("a,button");
+    if(!control)return;
+    var href=control.getAttribute("href")||"";
+    if(href.indexOf("/catalog")===0||control.closest(".gp-old-filter-panel,.gp-desktop-filter-panel,.gp-mobile-filter"))start();
+  },true);
+  document.addEventListener("submit",start,true);
+  addEventListener("pageshow",hide,{passive:true});
+  var main=document.querySelector("main");
+  if(main)new MutationObserver(function(mutations){
+    if(mutations.some(function(mutation){return (mutation.addedNodes&&mutation.addedNodes.length)||(mutation.removedNodes&&mutation.removedNodes.length)}))hide();
+  }).observe(main,{childList:true,subtree:true});
+}
+
+function gpFinalUxDesktopInstallGuide(){
+  if(location.pathname!=="/install-app")return;
+  var isMobile=window.matchMedia&&window.matchMedia("(max-width: 1023px)").matches||/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||"");
+  if(isMobile){ensureMobileInstallGuide();return;}
+  var main=document.querySelector("main");
+  var root=main&&(main.querySelector("section")||main);
+  if(!root)return;
+  var existing=root.querySelector(".gp-install-final-guide");
+  if(existing)return;
+  [].slice.call(root.children||[]).forEach(function(child){
+    if(child.querySelector&&child.querySelector("h1")&&gpFinalUxText(child).indexOf("\u0418\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f")>-1)child.style.display="none";
+  });
+  var block=document.createElement("section");
+  block.className="gp-install-final-guide";
+  block.dataset.gpVersion="final-ux-20260728";
+  function render(profile){
+    var guide=gpInstallGuideSteps(profile);
+    block.innerHTML='<h1>\u041a\u0430\u043a \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435</h1><p class="gp-install-old-note">\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u043e \u0438 \u0431\u0440\u0430\u0443\u0437\u0435\u0440, \u0432 \u043a\u043e\u0442\u043e\u0440\u043e\u043c \u043e\u0442\u043a\u0440\u043e\u0435\u0442\u0435 \u0441\u0430\u0439\u0442.</p><div class="gp-install-profile-picker"><button type="button" data-gp-install-profile="ios-safari">iPhone \u00b7 Safari</button><button type="button" data-gp-install-profile="ios-chrome">iPhone \u00b7 Chrome</button><button type="button" data-gp-install-profile="android-chrome">Android \u00b7 Chrome</button><button type="button" data-gp-install-profile="android-yandex">Android \u00b7 \u042f\u043d\u0434\u0435\u043a\u0441 \u0411\u0440\u0430\u0443\u0437\u0435\u0440</button></div><h2>'+guide.title+'</h2>'+(guide.extra?'<p class="gp-install-old-note">'+guide.extra+'</p>':'')+'<div class="gp-install-old-grid">'+guide.steps.slice(0,4).map(function(step,index){return '<article class="gp-install-old-step"><div class="gp-install-old-step-head"><span>'+(index+1)+'</span><div><h2>'+step[0]+'</h2><p>'+step[1]+'</p></div></div><div class="gp-install-old-art">'+(step[2]?'<img src="'+step[2]+'" alt="'+step[0]+'" loading="lazy">':"")+'</div></article>';}).join("")+"</div>";
+    [].slice.call(block.querySelectorAll("[data-gp-install-profile]")).forEach(function(button){
+      var active=button.getAttribute("data-gp-install-profile")===profile;
+      button.setAttribute("aria-pressed",active?"true":"false");
+      button.addEventListener("click",function(){render(button.getAttribute("data-gp-install-profile"))});
+    });
+  }
+  render("ios-safari");
+  root.appendChild(block);
+}
+
 function gpShouldRunForMutation(mutations){
   var ignoredSelector="[data-gp-storage-action-page],.gp-contact-widget-fallback,.gp-mobile-search-root,.gp-action-toast,.gp-search-suggestions,.gp-old-filter-panel,.gp-old-filter-overlay,.gp-mobile-floating-filter-button,.gp-desktop-floating-filter-button";
   return [].slice.call(mutations||[]).some(function(mutation){
@@ -5331,6 +5489,7 @@ function run(){
   ensurePriceCardFixStyle();
   ensurePravki31FinishingStyle();
   ensurePravki33FinishingStyle();
+  ensureFinalUxStyle();
   ensureProductImageFill75Style();
   ensureFavoritesCard93Style();
   installGlobalOldFilterClicks();
@@ -5355,6 +5514,7 @@ function run(){
     hideAllProductsCategory();
     ensureCosmeticsBrandLogos();
     gpUpdateCatalogPagination();
+    gpFinalUxCatalogLoader();
   }
   if(isCatalog||path.indexOf("/product/")===0||isFavorites){
     gpNormalizeVisibleProductPrices();
@@ -5375,6 +5535,7 @@ function run(){
   gpRenderCheckoutOld74();
   gpNormalizeProductImageFill75();
   ensureContactWidgetFallback();
+  gpFinalUxContactWidget();
   installLegalDocumentHandlers();
   installNavTabFix();
   markComparePage();
@@ -5391,16 +5552,22 @@ function run(){
     normalizeAndroidAccountHeader84();
     ensureAccountAuthFallback();
     ensureAccountEmailVerification();
+    gpFinalUxRemoveRedundantAuthNotice();
   }
   ensureLegalFooterButtons();
+  gpFinalUxDesktopInstallGuide();
   if(isContacts){
     replaceContactsText();
     addContactRequisites();
+    gpFinalUxMoveMapControls();
   }
   if(path==="/catalog")applyCatalogCovers();
   if(isCatalog||path.indexOf("/product/")===0||isFavorites)replaceProductFallbackImages();
   gpNormalizeProductImageFill75();
   if(isPromotions)hideEmptyPromotionShowcase();
+  gpFinalUxNormalizeCopy();
+  clearTimeout(window.__gpFinalUxCopyTimer);
+  window.__gpFinalUxCopyTimer=setTimeout(gpFinalUxNormalizeCopy,380);
   if(isCategory&&!isFavorites){
     normalizeMobileCategoryHeader();
     normalizeCatalogHeaderActions();
