@@ -4730,6 +4730,9 @@ function replaceContactsText(){
   [].slice.call(main.querySelectorAll('a[href^="mailto:"]')).forEach(function(link){
     link.href="mailto:info@garmoniya-plus.ru";
   });
+  [].slice.call(main.querySelectorAll('a[href*="t.me/"]')).forEach(function(link){
+    link.remove();
+  });
 }
 
 addContactRequisites=function(){
